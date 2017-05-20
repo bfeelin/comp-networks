@@ -1,0 +1,113 @@
+import java.util.*;
+import java.net.*;
+import java.io.*;
+public class p1 
+{
+	static Boolean exit = false;
+	static ArrayList<Long> respTimes = new ArrayList<Long>();
+	public static void main(String[] args) throws UnknownHostException, IOException
+	{
+		while(exit == false)
+			run();
+	}
+	public static void run() throws UnknownHostException, IOException
+	{
+			String input;
+			System.out.println("Select an option by number");
+			System.out.println("1. Date and Time");
+			System.out.println("2. Uptime");
+			System.out.println("3. Memory use");
+			System.out.println("4. Netstat");
+			System.out.println("5. Current users");
+			System.out.println("6. Running processes");
+			System.out.println("7. Quit");
+			Scanner sc = new Scanner(System.in);
+			input = sc.next();
+			if(!input.matches("[1-7]"))							//reject anything not 1-7 and display menu again
+			{
+				System.out.println("Invalid input. Only input integers between 1 and 7.");
+				System.out.println();
+				return;
+			}
+			int input1;
+			input1 = Integer.parseInt(input);
+			
+			if(input1 == 7)					//exit
+			{
+				exit = true;
+				System.out.println("Exiting");
+				return;
+			}
+			else 
+			{
+				try 
+				{
+					System.out.println("Establishing connection.....");
+					    Socket socket = new Socket("192.168.100.108", 22);
+					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+					    long startTime = System.currentTimeMillis();
+					    
+					    if(input1 == 1)
+							output.println("date");
+						else if(input1 == 2)
+							output.println("uptime");
+						else if(input1 == 3)
+							output.println("free");
+						else if(input1 == 4)
+							output.println("netstat");
+						else if(input1 == 5)
+							output.println("who");
+						else if(input1 == 6)
+							output.println("ps -e");
+					    
+					    BufferedReader input2 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+					    long endTime = System.currentTimeMillis();
+					    respTimes.add(endTime - startTime);
+					    System.out.println(stdIn.readLine());
+					    
+				}
+				finally
+				{
+					System.out.println("error");
+				}
+				
+			}
+		
+	}
+	public static void send(int selection, PrintWriter PS)
+	{
+		if(selection == 1)
+		{
+			PS.println("date");
+			return;
+		}
+		else if(selection == 2)
+		{
+			PS.println("uptime");
+			return;
+		}
+		else if(selection == 3)
+		{
+			PS.println("free");
+			return;
+		}
+		else if(selection == 4)
+		{
+			PS.println("netstat");
+			return;
+		}
+		else if(selection == 5)
+		{
+			PS.println("who");
+			return;
+		}
+		else if(selection == 6)
+		{
+			PS.println("ps -e");
+			return;
+		}
+		
+	}
+
+}
