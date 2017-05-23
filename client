@@ -1,0 +1,82 @@
+package p1;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+
+public class Server {
+
+	public static void main(String[] args) throws UnknownHostException, IOException
+	{
+		System.out.println("Connecting");
+		try{
+			ServerSocket ser = new ServerSocket(9999);
+			Socket sock = ser.accept();
+			
+			BufferedReader ed = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+				
+			String tmp = ed.readLine();
+			System.out.println("I received :" + tmp);
+			
+			PrintStream pr = new PrintStream(sock.getOutputStream());
+			String str = "Yup I got it";
+			
+			pr.println(str);
+			
+		} catch(Exception ex){
+			System.out.println("Not Working");
+		}
+	}
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+package p2;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.OutputStream;
+
+
+import java.io.*;
+import java.net.Socket;
+
+public class client {
+	
+	public static void main(String[] args)
+	{
+		try{
+			Socket sock = new Socket("localhost", 9999);
+			
+			PrintStream pr = new PrintStream(sock.getOutputStream());
+			
+			System.out.println("Enter Something...");
+			
+			InputStreamReader rd = new InputStreamReader(System.in);
+			BufferedReader ed = new BufferedReader(rd);
+			
+			String  temp = ed.readLine();
+			pr.println(temp);
+			
+			BufferedReader gt = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			
+			String tm = gt.readLine();
+			System.out.println(tm);
+			
+		}
+		catch(Exception ex){
+			System.out.println("Not Working");
+		}
+	}
+
+
+
+}
+
