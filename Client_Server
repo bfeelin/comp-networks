@@ -1,0 +1,113 @@
+package p1;
+
+import java.io.BufferedReader;
+
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+
+
+
+public class Server {
+
+	
+	public static void main(String[] args) {
+		
+		System.out.println("Connecting...");
+		
+		try
+		{
+			System.out.println("Getting this far");
+			
+			ServerSocket ser = new ServerSocket(9999);
+			System.out.println("Getting farther");
+			System.out.println(ser);
+			Socket sock = ser.accept();
+			
+			BufferedReader ed = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+				
+			String tmp = ed.readLine();
+			
+			System.out.println("I received :" + tmp);
+			
+			
+			PrintStream pr = new PrintStream(sock.getOutputStream());
+			
+			
+			
+		
+		
+		   		    	    
+		    
+			if(tmp != null){
+		    	String tmp1	 = tmp;  	
+		    	tmp1 = "1";
+				System.out.println("Date");
+				}
+			else if(tmp != null){
+		    	String tmp1	 = tmp;  	
+		    	tmp1 = "2";
+				System.out.println("Uptime");
+				}
+		    
+		    String str = "Yup I got it";
+		    pr.println(str);
+		    
+		   
+			
+	
+		} 
+		catch(Exception ex)
+		{
+			System.out.println("Not Working");
+		}
+	}
+}
+
+
+____________________________________________________________________________________________________________________________________
+
+
+
+package p2;
+
+import java.io.PrintStream;
+import java.io.OutputStream;
+
+
+import java.io.*;
+import java.net.Socket;
+
+public class client {
+	
+	public static void main(String[] args)
+	{
+		try{
+			Socket sock = new Socket("localhost", 9999);
+			
+			PrintStream pr = new PrintStream(sock.getOutputStream());
+			
+			System.out.println("Enter Something...");
+			
+			InputStreamReader rd = new InputStreamReader(System.in);
+			BufferedReader ed = new BufferedReader(rd);
+			
+			String  temp = ed.readLine();
+			pr.println(temp);
+			
+			BufferedReader gt = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			
+			String tm = gt.readLine();
+			System.out.println(tm);
+			
+		}
+		catch(Exception ex){
+			System.out.println("Not Working");
+		}
+	}
+
+
+
+}
