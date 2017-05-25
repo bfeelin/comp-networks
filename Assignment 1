@@ -1,0 +1,24 @@
+From A to B:
+
+           Thepropagation delay time = 4000 * 5microsec = 20msec
+
+The transmission time per frame = 1000/(100*10^3)=10msec
+
+From B to C:
+
+          Thepropagation delay time = 1000 * 5 micro sec = 5msec
+
+The transmission time for frame = x=1000/R
+
+The data rate between B and C =R
+
+A can transmit three frames to B and then must wait for theacknowledgement of the first frame before transmitting additionalframes. The first frame takes 10 msec to transmit; the last bit ofthe first frame arrives at B 20 msec after it was transmitted andtherefore 30msec after the frame transmission began. It will takean additional 20msec for B’s ack to return to A. thus A cantransmit three frames in 50msec.
+
+B can transmit one frame to C at a time. it takes 5+x msec forthe frame to be received at C and an additional 5 msec forC’s acknowledgement to return to A.thus,B transmit one frameevery 10 + x msec,or three frames every 30 + 3x msec.thus,
+
+30 + 3x=50
+
+X=6.66msec
+
+R=1000/x=150kbps
+
