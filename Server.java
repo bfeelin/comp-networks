@@ -17,22 +17,23 @@ public class Server {
 		try
 		{
 			    @SuppressWarnings("resource")
-				ServerSocket serverSocket = new ServerSocket(9998);
+				ServerSocket serverSocket = new ServerSocket(9990);
 			    System.out.println("Server socket created");
 			    Socket clientSocket = serverSocket.accept();
 			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
 			    BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
 			    
 			    String inputLine = null, outputLine = null;
-	            while ((inputLine = input.readLine()) != null) 
+	            while ((inputLine = input.readLine()) != null) 									//while there are more commands
 	            {	
-	            	System.out.println("Running " + inputLine);           	
-	            	Process p = Runtime.getRuntime().exec(inputLine);
-	            	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));	
+	            	System.out.println("Running " + inputLine);									           	
+	            	Process p = Runtime.getRuntime().exec(inputLine);							//run the command
+	            	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));	 //to read what is printed by the command
 	            	
-	            	while((outputLine = readOutput.readLine()) != null)	
-	            		output.println(outputLine);
+	            	while((outputLine = readOutput.readLine()) != null)							//while there is more output
+	            		output.println(outputLine);												//send it to the client
 	            	
+	            	output.println("end");
 	            	p.waitFor();
 	            	System.out.println("Finished executing " + inputLine);
 	            	p.destroy();
