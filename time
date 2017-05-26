@@ -1,0 +1,45 @@
+import java.net.*;
+import java.io.*;
+
+
+public class Client {
+
+	
+
+	public static void main(String[] args) throws UnknownHostException, IOException
+	{
+		
+					run();		
+			
+	}
+	
+
+	public static void run() throws UnknownHostException, IOException{
+		
+		double startTime;
+		double endTime;
+		
+
+		try {
+			Socket clientSocket = new Socket("192.168.100.109", 9998);
+
+			// Reads input from server
+			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			// Prints output from server
+			PrintStream os = new PrintStream(clientSocket.getOutputStream());
+
+			startTime = System.currentTimeMillis();  //Timer starts just before server request
+			
+			String serverOutput = in.readLine();
+			System.out.println(serverOutput);
+			endTime = System.currentTimeMillis();  //Timer stops after last byte is sent
+
+			clientSocket.close();
+
+			System.out.println("Response time = " + (endTime - startTime));  //Print calculation of Response time
+		} catch (Exception e) {
+			System.out.println("Can't open socket at "); 
+			System.exit(-1);
+		}
+	}
+}
