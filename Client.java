@@ -16,22 +16,26 @@ public class Client
 				{
 						System.out.println("Establishing connection.....");
 					    @SuppressWarnings("resource")
-						Socket socket = new Socket("192.168.100.109", 9998);
+						Socket socket = new Socket("192.168.100.109", 9990);
 					    System.out.println("Client socket created.");
 					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);	    				//to write to Server
 					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	//to read from Server
 					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));				//to read input
 					    
 					    String userInput;
+					    String results = null;
 					    displayMenu();
-					    while ((userInput = stdIn.readLine()) != null && !(userInput.equals("error"))) 
+					    while ((userInput = stdIn.readLine()) != null && !(userInput.equals("error"))) 					//read input from the user
 					    {
-					    	userInput = getCmd(userInput);
+					    	userInput = getCmd(userInput);							//get appropriate command, checking for errors
 
 					    	long startTime = System.currentTimeMillis();
-					        output.println(userInput);
-					        System.out.println(input.readLine());
+					        output.println(userInput);								//send input to the server	
+					        while(!(results = input.readLine()).equals("end"))		//while there are more results
+					        	System.out.println(results);						//print
 					        long endTime = System.currentTimeMillis();
+					        System.out.println("End of results");
+					        
 					        respTimes.add(endTime - startTime);
 					    }
 				}
