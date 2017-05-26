@@ -18,20 +18,19 @@ public class Client
 					    @SuppressWarnings("resource")
 						Socket socket = new Socket("192.168.100.109", 9998);
 					    System.out.println("Client socket created.");
-					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);	    
-					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);	    				//to write to Server
+					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	//to read from Server
+					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));				//to read input
 					    
 					    String userInput;
 					    displayMenu();
-					    while ((userInput = stdIn.readLine()) != null) 
+					    while ((userInput = stdIn.readLine()) != null && !(userInput.equals("error"))) 
 					    {
 					    	userInput = getCmd(userInput);
-					    	if(userInput.equals("error"))
-					    		break;
+
 					    	long startTime = System.currentTimeMillis();
 					        output.println(userInput);
-					        System.out.println("echo: " + input.readLine());
+					        System.out.println(input.readLine());
 					        long endTime = System.currentTimeMillis();
 					        respTimes.add(endTime - startTime);
 					    }
