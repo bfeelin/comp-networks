@@ -41,10 +41,10 @@ public class Server {
 		            		threads.get(i).start(inputLine); 										//run command
 		            		totalRespTime += threads.get(i).getRespTime();							//add this response time to the total
 		            	}
-		            	output.println("Average response time running " + inputLine + " for " + noClients + " clients: " + totalRespTime/noClients);
+		            	output.println("Average response time running '" + inputLine + "' for " + noClients + " clients: " + totalRespTime/noClients + "ms");
 		            	output.println("end");
 		            	threads.clear();										//clear old threads
-		           	totalRespTime = 0;
+		            	totalRespTime = 0;
 			    }
 		}
 		catch (IOException e) 
