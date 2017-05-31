@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.DecimalFormat;
 
 public class Thread 
 {
@@ -21,7 +22,9 @@ public class Thread
 	{
 		System.out.println("Running " + cmd);	
 		run(cmd);
-		System.out.println("Finished executing " + cmd + ". Response time : " + this.respTime + "ms");
+		DecimalFormat df = new DecimalFormat("#.##");
+		double rT = Double.valueOf(df.format(this.respTime));
+		System.out.println("Finished executing " + cmd + ". Response time : " + rT + "ms");
 	}
 	void run(String cmd) throws IOException, InterruptedException
 	{
@@ -33,10 +36,7 @@ public class Thread
     	while((outputLine = readOutput.readLine()) != null)							//while there is more output
     		output.println(outputLine);												//send it to the client
     	long endTime = System.nanoTime();
-    	//System.out.println("start time: " + startTime);
-    	//System.out.println("end time: " + endTime);
     	this.respTime = (endTime - startTime)/1000000.0;
-    	//System.out.println("response time " + this.respTime);
     														
     	p.waitFor();
     	p.destroy();
