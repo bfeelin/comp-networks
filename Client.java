@@ -3,20 +3,22 @@ import java.net.*;
 import java.io.*;
 public class Client 
 {
-	static Boolean exit = false;
-	static ArrayList<Long> respTimes = new ArrayList<Long>();
 	public static void main(String[] args) throws UnknownHostException, IOException
 	{
-			run();
+		if(args[0] == null)
+		{
+			System.out.println("Error: IP address of server not specified.");
+			System.exit(0);
+		}
+		else run(args[0]);
 	}
-	public static void run() throws UnknownHostException, IOException
-	{
-
+	public static void run(String ip) throws UnknownHostException, IOException
+	{	
 				try 
 				{
 						System.out.println("Establishing connection.....");
 					    @SuppressWarnings("resource")
-						Socket socket = new Socket("192.168.100.109", 9990);
+						Socket socket = new Socket(ip, 9990);
 					    System.out.println("Client socket created.");
 					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);	    				//to write to Server
 					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	//to read from Server
@@ -25,18 +27,16 @@ public class Client
 					    String userInput;
 					    String results = null;
 					    displayMenu();
-					    while ((userInput = stdIn.readLine()) != null && !(userInput.equals("error"))) 					//read input from the user
+					    while ((userInput = stdIn.readLine()) != null) 					//read input from the user
 					    {
 					    	userInput = getCmd(userInput);							//get appropriate command, checking for errors
-
-					    	long startTime = System.currentTimeMillis();
+					    	if(userInput.equals("error"))							//if input is not an integer between 1 and 7
+					    		continue;											//restart while loop
+					    
 					        output.println(userInput);								//send input to the server	
 					        while(!(results = input.readLine()).equals("end"))		//while there are more results
 					        	System.out.println(results);						//print
-					        long endTime = System.currentTimeMillis();
-					        System.out.println("End of results");
-					        
-					        respTimes.add(endTime - startTime);
+					       
 					    }
 				}
 				catch (IOException e) 
