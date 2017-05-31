@@ -33,7 +33,10 @@ public class Thread
     	while((outputLine = readOutput.readLine()) != null)							//while there is more output
     		output.println(outputLine);												//send it to the client
     	long endTime = System.nanoTime();
-    	this.respTime = (endTime - startTime)/1000000;
+    	//System.out.println("start time: " + startTime);
+    	//System.out.println("end time: " + endTime);
+    	this.respTime = (endTime - startTime)/1000000.0;
+    	//System.out.println("response time " + this.respTime);
     														
     	p.waitFor();
     	p.destroy();
