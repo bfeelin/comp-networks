@@ -32,7 +32,7 @@ public class Client
 					    	userInput = getCmd(userInput);							//get appropriate command, checking for errors
 					    	if(userInput.equals("error"))							//if input is not an integer between 1 and 7
 					    		continue;											//restart while loop
-					    
+					    					    	
 					        output.println(userInput);								//send input to the server	
 					        while(!(results = input.readLine()).equals("end"))		//while there are more results
 					        	System.out.println(results);						//print
