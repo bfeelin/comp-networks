@@ -4,9 +4,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Server {
-
+	static ArrayList<Thread> threads = new ArrayList<Thread>();
 	public static void main(String[] args) throws IOException, InterruptedException 
 	{
 		run();
@@ -19,26 +20,32 @@ public class Server {
 			    @SuppressWarnings("resource")
 				ServerSocket serverSocket = new ServerSocket(9990);
 			    System.out.println("Server socket created");
-			    Socket clientSocket = serverSocket.accept();
-			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
-			    BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
-			    
-			    String inputLine = null, outputLine = null;
-	            while ((inputLine = input.readLine()) != null) 									//while there are more commands
-	            {	
-	            	System.out.println("Running " + inputLine);									           	
-	            	Process p = Runtime.getRuntime().exec(inputLine);							//run the command
-	            	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));	 //to read what is printed by the command
-	            	
-	            	while((outputLine = readOutput.readLine()) != null)							//while there is more output
-	            		output.println(outputLine);												//send it to the client
-	            	
-	            	output.println("end");
-	            	p.waitFor();
-	            	System.out.println("Finished executing " + inputLine);
-	            	p.destroy();
-	            	
-	            }
+			    Socket clientSocket = null;
+
+			    String inputLine = null;
+			    int i = 0;
+			    int noClients = 10;
+
+	            	while (i < noClients) 
+	            	{
+	                    try 
+	                    {
+	                        clientSocket = serverSocket.accept();
+	                    } 
+	                    catch (IOException e) 
+	                    {
+	                        System.out.println("I/O error: " + e);
+	                    }
+	                    Thread newThread = new Thread(clientSocket);
+	                    threads.add(newThread);      
+	                    i++;
+	            	}
+	            	 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
+		            while ((inputLine = input.readLine()) != null) 									//while there are more commands
+		            {	    	
+		            	for(i = 0; i < noClients; i++)
+		            		threads.get(i).start(inputLine);            	
+		            }
 		}
 		catch (IOException e) 
 		{
