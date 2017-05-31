@@ -7,12 +7,12 @@ import java.net.Socket;
 public class Thread 
 {
 	public Socket socket;
-	public long respTime;
+	public double respTime;
 	Thread(Socket clientSocket)
 	{
 		this.socket = clientSocket;
 	}
-	long getRespTime()
+	double getRespTime()
 	{
 		return this.respTime;
 	}
@@ -21,7 +21,7 @@ public class Thread
 	{
 		System.out.println("Running " + cmd);	
 		run(cmd);
-		System.out.println("Finished executing " + cmd + "Response time : " + this.respTime);
+		System.out.println("Finished executing " + cmd + ". Response time : " + this.respTime + "ms");
 	}
 	void run(String cmd) throws IOException, InterruptedException
 	{
@@ -32,8 +32,9 @@ public class Thread
     	PrintWriter output = new PrintWriter(this.socket.getOutputStream(), true);							//to write to Client
     	while((outputLine = readOutput.readLine()) != null)							//while there is more output
     		output.println(outputLine);												//send it to the client
-    	this.respTime = startTime - System.nanoTime();
-    														//send "end" to indicate end of output
+    	long endTime = System.nanoTime();
+    	this.respTime = (endTime - startTime)/1000000;
+    														
     	p.waitFor();
     	p.destroy();
 	    
