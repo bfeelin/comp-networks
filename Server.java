@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Server {
@@ -41,7 +42,9 @@ public class Server {
 		            		threads.get(i).start(inputLine); 										//run command
 		            		totalRespTime += threads.get(i).getRespTime();							//add this response time to the total
 		            	}
-		            	output.println("Average response time running '" + inputLine + "' for " + noClients + " clients: " + totalRespTime/noClients + "ms");
+		            	DecimalFormat df = new DecimalFormat("#.##");
+		        		double tRT = Double.valueOf(df.format(totalRespTime));
+		            	output.println("Average response time running '" + inputLine + "' for " + noClients + " clients: " + tRT/noClients + "ms");
 		            	output.println("end");
 		            	threads.clear();										//clear old threads
 		            	totalRespTime = 0;
