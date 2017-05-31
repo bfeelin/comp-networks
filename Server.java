@@ -19,29 +19,31 @@ public class Server {
 		try
 		{
 			    @SuppressWarnings("resource")
-				ServerSocket serverSocket = new ServerSocket(9990);
+				ServerSocket serverSocket = new ServerSocket(9991);
 			    System.out.println("Server socket created");
 			    Socket clientSocket = serverSocket.accept();
 			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
 			    String inputLine = null;
-			    int i = 0;
-			    int noClients = 10;
+			    int noClients;
 
-			    	for(i = 0; i < noClients; i++) 
-	            	{
-	                    Thread newThread = new Thread(clientSocket);
-	                    threads.add(newThread);      
-	            	}
 	            	 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
 		            while ((inputLine = input.readLine()) != null) 									//while there are more commands
-		            {	    	
-		            	for(i = 0; i < noClients; i++)
+		            {	    																		//get command
+		            	noClients = Integer.parseInt(input.readLine());								//get number of clients
+		            	
+				    	for(int i = 0; i < noClients; i++) 											//initialize thread objects and add to array
 		            	{
-		            		threads.get(i).start(inputLine);  
-		            		totalRespTime += threads.get(i).getRespTime();
+		                    Thread newThread = new Thread(clientSocket);
+		                    threads.add(newThread);      
+		            	}
+		            	for(int i = 0; i < noClients; i++)											
+		            	{
+		            		threads.get(i).start(inputLine); 										//run command
+		            		totalRespTime += threads.get(i).getRespTime();							//add this response time to the total
 		            	}
 		            	output.println("Average response time running " + inputLine + " for " + noClients + " clients: " + totalRespTime/noClients);
 		            	output.println("end");
+		            	threads.clear();										//clear old threads
 		            }
 		}
 		catch (IOException e) 
