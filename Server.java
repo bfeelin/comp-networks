@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Server {
 	static ArrayList<Thread> threads = new ArrayList<Thread>();
-	static long totalRespTime = 0;
+	static double totalRespTime = 0;
 	public static void main(String[] args) throws IOException, InterruptedException 
 	{
 		run();
@@ -44,7 +44,8 @@ public class Server {
 		            	output.println("Average response time running " + inputLine + " for " + noClients + " clients: " + totalRespTime/noClients);
 		            	output.println("end");
 		            	threads.clear();										//clear old threads
-		            }
+		           	totalRespTime = 0;
+			    }
 		}
 		catch (IOException e) 
 		{
