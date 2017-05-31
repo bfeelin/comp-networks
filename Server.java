@@ -20,31 +20,23 @@ public class Server {
 			    @SuppressWarnings("resource")
 				ServerSocket serverSocket = new ServerSocket(9990);
 			    System.out.println("Server socket created");
-			    Socket clientSocket = null;
-
+			    Socket clientSocket = serverSocket.accept();
+			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
 			    String inputLine = null;
 			    int i = 0;
 			    int noClients = 10;
 
-	            	while (i < noClients) 
+			    	for(i = 0; i < noClients; i++) 
 	            	{
-	                    try 
-	                    {
-	                        clientSocket = serverSocket.accept();
-	                    } 
-	                    catch (IOException e) 
-	                    {
-	                        System.out.println("I/O error: " + e);
-	                    }
 	                    Thread newThread = new Thread(clientSocket);
 	                    threads.add(newThread);      
-	                    i++;
 	            	}
 	            	 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
 		            while ((inputLine = input.readLine()) != null) 									//while there are more commands
 		            {	    	
 		            	for(i = 0; i < noClients; i++)
-		            		threads.get(i).start(inputLine);            	
+		            		threads.get(i).start(inputLine);  
+		            	output.println("end");
 		            }
 		}
 		catch (IOException e) 
