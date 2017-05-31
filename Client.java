@@ -18,12 +18,13 @@ public class Client
 				{
 						System.out.println("Establishing connection.....");
 					    @SuppressWarnings("resource")
-						Socket socket = new Socket(ip, 9990);
-					    System.out.println("Client socket created.");
+						Socket socket = new Socket(ip, 9991);
+					    System.out.println("Client socket connected to server " + ip);
 					    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);	    				//to write to Server
 					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	//to read from Server
 					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));				//to read input
-					    
+					   
+					    String noClients;
 					    String userInput;
 					    String results = null;
 					    displayMenu();
@@ -32,11 +33,14 @@ public class Client
 					    	userInput = getCmd(userInput);							//get appropriate command, checking for errors
 					    	if(userInput.equals("error"))							//if input is not an integer between 1 and 7
 					    		continue;											//restart while loop
-					    					    	
+					    	
+					    	noClients = getNoClients();								//prompt for number of clients
 					        output.println(userInput);								//send input to the server	
+					        output.println(noClients);								//send noClients to server
 					        while(!(results = input.readLine()).equals("end"))		//while there are more results
 					        	System.out.println(results);						//print
 					       
+					        displayMenu();
 					    }
 				}
 				catch (IOException e) 
@@ -44,6 +48,21 @@ public class Client
 		            System.out.println("Exception caught when trying to listen on port or listening for a connection");
 		            System.out.println(e.getMessage());
 		        }
+	}
+	
+	public static String getNoClients()
+	{
+		String noClients;
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Please enter the number of clients (max 100): ");
+		noClients = scan.nextLine();
+		
+		while(!(noClients.matches("\\d\\d?") || noClients.equals("100")))							//while invalid input
+		{
+			System.out.println("Invalid input. Please enter an integer between 1 and 100.");
+			noClients = scan.nextLine();
+		}
+		return noClients;
 	}
 	
 	public static void displayMenu()
