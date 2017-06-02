@@ -1,9 +1,13 @@
 import java.util.*;
 import java.net.*;
+import java.text.DecimalFormat;
 import java.io.*;
 public class Client 
 {
-	public static void main(String[] args) throws UnknownHostException, IOException
+	static ArrayList<Thread> threads = new ArrayList<Thread>();
+	static ArrayList<Double> respTimes = new ArrayList<Double>();
+	static StringBuilder res = new StringBuilder();;
+	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException
 	{
 		if(args[0] == null)
 		{
@@ -12,7 +16,7 @@ public class Client
 		}
 		else run(args[0]);
 	}
-	public static void run(String ip) throws UnknownHostException, IOException
+	public static void run(String ip) throws UnknownHostException, IOException, InterruptedException
 	{	
 				try 
 				{
@@ -24,9 +28,10 @@ public class Client
 					    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	//to read from Server
 					    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));				//to read input
 					   
-					    String noClients;
+					    String numClients;
+					    int noClients;
 					    String userInput;
-					    String results = null;
+					    String results;
 					    displayMenu();
 					    while ((userInput = stdIn.readLine()) != null) 					//read input from the user
 					    {
@@ -34,12 +39,47 @@ public class Client
 					    	if(userInput.equals("error"))							//if input is not an integer between 1 and 7
 					    		continue;											//restart while loop
 					    	
-					    	noClients = getNoClients();								//prompt for number of clients
-					        output.println(userInput);								//send input to the server	
-					        output.println(noClients);								//send noClients to server
-					        while(!(results = input.readLine()).equals("end"))		//while there are more results
-					        	System.out.println(results);						//print
-					       
+					    	numClients = getNoClients();								//prompt for number of clients
+					        noClients = Integer.parseInt(numClients);
+					    	
+					        for(int i = 0; i < noClients; i++) 						//initialize thread objects and add to array
+			            	{
+			                    Thread newThread = new Thread(input, output, userInput);
+			                    threads.add(newThread);      
+			            	}
+					        threads.get(noClients-1).last = true;					//set completion flag
+			            	for(int i = 0; i < noClients; i++)						//set start time and run each thread											
+			            	{
+			            		threads.get(i).setStartTime(System.nanoTime());
+			            		threads.get(i).run();
+			            	}          	
+			            	int k = 0;
+			            	while((results = input.readLine()) != null)		//while there are more results
+						    {
+			            		if(results.equals("last"))				
+			            			break;
+			            		if(results.equals("end"))				//if last byte is in
+			            			threads.get(k++).setEndTime(System.nanoTime());
+			            		else res.append(results+"\n");							//else store results                  		
+			            	}
+
+			            	System.out.println(res.toString());
+		            		DecimalFormat df = new DecimalFormat("#.##");
+		            		double totalRespTime = 0;
+			            	for(int j = 1; j < threads.size() + 1; j++)					//collect response times
+			            	{
+			            		long sT = threads.get(j-1).getStartTime();
+			            		long eT = threads.get(j-1).getEndTime();
+			            		double responseTime = (eT - sT)/1000000.0;
+			            		double rT = Double.valueOf(df.format(responseTime));
+			            		System.out.println("Response time for thread " + j + ": " +rT);
+			            		totalRespTime += rT;
+			            	}
+			            	System.out.println("Average response time running " + userInput + " for " + noClients + " clients: " + totalRespTime/threads.size() + "ms");
+			            	res = new StringBuilder();
+			            	threads.clear();
+			            	respTimes.clear();							//clear threads and data
+			            	totalRespTime = 0;
 					        displayMenu();
 					    }
 				}
@@ -50,14 +90,14 @@ public class Client
 		        }
 	}
 	
-	public static String getNoClients()
+	public static String getNoClients()										//prompt for number of clients
 	{
 		String noClients;
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Please enter the number of clients (max 100): ");
 		noClients = scan.nextLine();
 		
-		while(!(noClients.matches("\\d\\d?") || noClients.equals("100")))							//while invalid input
+		while(!(noClients.matches("\\d\\d?") || noClients.equals("100")) || noClients.matches("0(0+)?"))							//while invalid input
 		{
 			System.out.println("Invalid input. Please enter an integer between 1 and 100.");
 			noClients = scan.nextLine();
