@@ -1,54 +1,54 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class Server {
-	static ArrayList<Thread> threads = new ArrayList<Thread>();
-	static double totalRespTime = 0;
-	public static void main(String[] args) throws IOException, InterruptedException 
+public class Server {	
+	
+	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException 
 	{
 		run();
 	}
 	
-	public static void run() throws IOException, InterruptedException
+	public static void run() throws IOException, InterruptedException, ClassNotFoundException
 	{
+		StringBuilder data;
 		try
 		{
-			    @SuppressWarnings("resource")
 				ServerSocket serverSocket = new ServerSocket(9991);
 			    System.out.println("Server socket created");
 			    Socket clientSocket = serverSocket.accept();
 			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
 			    String inputLine = null;
-			    int noClients;
-
-	            	 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
-		            while ((inputLine = input.readLine()) != null) 									//while there are more commands
-		            {	    																		//get command
-		            	noClients = Integer.parseInt(input.readLine());								//get number of clients
-		            	
-				    	for(int i = 0; i < noClients; i++) 											//initialize thread objects and add to array
-		            	{
-		                    Thread newThread = new Thread(clientSocket);
-		                    threads.add(newThread);      
-		            	}
-		            	for(int i = 0; i < noClients; i++)											
-		            	{
-		            		threads.get(i).start(inputLine); 										//run command
-		            		totalRespTime += threads.get(i).getRespTime();							//add this response time to the total
-		            	}
-		            	DecimalFormat df = new DecimalFormat("#.##");
-		        		double tRT = Double.valueOf(df.format(totalRespTime));
-		            	output.println("Average response time running '" + inputLine + "' for " + noClients + " clients: " + tRT/noClients + "ms");
-		            	output.println("end");
-		            	threads.clear();										//clear old threads
-		            	totalRespTime = 0;
+	            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
+	            String outputLine;
+	            
+	            
+		        while ((inputLine = input.readLine()) != null) 									//while there are more commands
+		        {
+		        	if(inputLine.equals("last"))										//flag when done
+		        	{	
+		        		output.println("last");
+		        		continue;
+		        	}
+		        	System.out.println("Running " + inputLine);
+		        	Process p = Runtime.getRuntime().exec(inputLine);									//run the command
+		        	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		        	
+					while((outputLine = readOutput.readLine()) != null)							//while there is more output
+		        		output.println(outputLine); 
+					output.println("end");
+					
+		        	p.waitFor();
+		        	p.destroy();
 			    }
+		        
+		       
 		}
 		catch (IOException e) 
 		{
