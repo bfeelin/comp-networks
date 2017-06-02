@@ -7,40 +7,40 @@ import java.text.DecimalFormat;
 
 public class Thread 
 {
-	public Socket socket;
-	public double respTime;
-	Thread(Socket clientSocket)
+	public String cmd;
+	public long startTime;
+	public long endTime;
+	BufferedReader input = null;		//to read from Server
+	PrintWriter output = null;	    		//to write to Server
+	boolean last = false;
+	
+	Thread(BufferedReader input, PrintWriter output, String cmd)
 	{
-		this.socket = clientSocket;
+		this.input = input;
+		this.output = output;
+		this.cmd = cmd;
 	}
-	double getRespTime()
+	long getStartTime()
 	{
-		return this.respTime;
+		return this.startTime;
 	}
-
-	void start(String cmd) throws IOException, InterruptedException
+	long getEndTime()
 	{
-		System.out.println("Running " + cmd);	
-		run(cmd);
-		DecimalFormat df = new DecimalFormat("#.##");
-		double rT = Double.valueOf(df.format(this.respTime));
-		System.out.println("Finished executing " + cmd + ". Response time : " + rT + "ms");
+		return this.endTime;
 	}
-	void run(String cmd) throws IOException, InterruptedException
+	void setStartTime(long sT)
 	{
-		String outputLine = null;
-		long startTime = System.nanoTime();
-		Process p = Runtime.getRuntime().exec(cmd);							//run the command
-    	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));	 //to read what is printed by the command
-    	PrintWriter output = new PrintWriter(this.socket.getOutputStream(), true);							//to write to Client
-    	while((outputLine = readOutput.readLine()) != null)							//while there is more output
-    		output.println(outputLine);												//send it to the client
-    	long endTime = System.nanoTime();
-    	this.respTime = (endTime - startTime)/1000000.0;
-    														
-    	p.waitFor();
-    	p.destroy();
-	    
+		this.startTime = sT;
+	}
+	void setEndTime(long eT)
+	{
+		this.endTime = eT;
+	}
+	void run() throws IOException, InterruptedException
+	{
+		output.println(this.cmd);								//run command	    
+		if(this.last == true)
+			output.println("last");
 	}
 }
 
