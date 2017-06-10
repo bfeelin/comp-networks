@@ -20,32 +20,19 @@ public class Server {
 		StringBuilder data;
 		try
 		{
+				@SuppressWarnings("resource")
 				ServerSocket serverSocket = new ServerSocket(9991);
 			    System.out.println("Server socket created");
 			    Socket clientSocket = serverSocket.accept();
-			    PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);							//to write to Client
 			    String inputLine = null;
 	            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));	//to read from Client
-	            String outputLine;
-	            
-	            
+
 		        while ((inputLine = input.readLine()) != null) 									//while there are more commands
 		        {
-		        	if(inputLine.equals("last"))										//flag when done
-		        	{	
-		        		output.println("last");
+		        	if(inputLine.equals("done"))
 		        		continue;
-		        	}
-		        	System.out.println("Running " + inputLine);
-		        	Process p = Runtime.getRuntime().exec(inputLine);									//run the command
-		        	BufferedReader readOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		        	
-					while((outputLine = readOutput.readLine()) != null)							//while there is more output
-		        		output.println(outputLine); 
-					output.println("end");
-					
-		        	p.waitFor();
-		        	p.destroy();
+		        	ServerThread newST = new ServerThread(clientSocket, inputLine);			//create thread and run
+		        	newST.run();
 			    }
 		        
 		       
