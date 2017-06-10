@@ -13,6 +13,8 @@ public class Thread
 	BufferedReader input = null;		//to read from Server
 	PrintWriter output = null;	    		//to write to Server
 	boolean last = false;
+	StringBuilder res = new StringBuilder();
+	String results;
 	
 	Thread(BufferedReader input, PrintWriter output, String cmd)
 	{
@@ -36,11 +38,19 @@ public class Thread
 	{
 		this.endTime = eT;
 	}
+	
+	void start() throws IOException, InterruptedException
+	{
+		setStartTime(System.nanoTime());
+		run();
+		setEndTime(System.nanoTime());	
+	}
 	void run() throws IOException, InterruptedException
 	{
 		output.println(this.cmd);								//run command	    
-		if(this.last == true)
-			output.println("last");
+		while(!(results = input.readLine()).equals("end"))		//while there are more results
+				res.append(results+"\n");							//else store results                  		
+
 	}
 }
 
