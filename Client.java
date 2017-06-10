@@ -6,7 +6,7 @@ public class Client
 {
 	static ArrayList<Thread> threads = new ArrayList<Thread>();
 	static ArrayList<Double> respTimes = new ArrayList<Double>();
-	static StringBuilder res = new StringBuilder();;
+	static StringBuilder res = new StringBuilder();
 	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException
 	{
 		if(args[0] == null)
@@ -48,23 +48,15 @@ public class Client
 			                    threads.add(newThread);      
 			            	}
 					        threads.get(noClients-1).last = true;					//set completion flag
-			            	for(int i = 0; i < noClients; i++)						//set start time and run each thread											
-			            	{
-			            		threads.get(i).setStartTime(System.nanoTime());
-			            		threads.get(i).run();
-			            	}          	
-			            	int k = 0;
-			            	while((results = input.readLine()) != null)		//while there are more results
-						    {
-			            		if(results.equals("last"))				
-			            			break;
-			            		if(results.equals("end"))				//if last byte is in
-			            			threads.get(k++).setEndTime(System.nanoTime());
-			            		else res.append(results+"\n");							//else store results                  		
-			            	}
-
-			            	System.out.println(res.toString());
-		            		DecimalFormat df = new DecimalFormat("#.##");
+			            	
+					        for(int i = 0; i < noClients; i++)						//start each thread											
+			            		threads.get(i).start();
+			            	
+					        output.println("done");
+			            	for(int i = 0; i < noClients; i++)						//print output stored in each thread
+			            		System.out.println(threads.get(i).res.toString());
+		            		
+			            	DecimalFormat df = new DecimalFormat("#.##");
 		            		double totalRespTime = 0;
 			            	for(int j = 1; j < threads.size() + 1; j++)					//collect response times
 			            	{
